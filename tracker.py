@@ -149,8 +149,9 @@ if __name__ == "__main__":
     msg = format_message(data, prev_best, is_morning)
     print(msg.replace("*", "").replace("`", ""))  # sauber in Konsole
 
-    # Nachricht senden wenn: neues Maximum ODER erster Run des Tages
-    if is_new_max or is_morning:
+    # Nachricht senden wenn: neues Maximum ODER erster Run des Tages ODER manueller Test
+    force = os.environ.get("FORCE_NOTIFY", "").lower() == "true"
+    if is_new_max or is_morning or force:
         send_telegram(msg)
         print("✉️  Telegram-Nachricht gesendet." if TG_TOKEN else "")
 
