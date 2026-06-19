@@ -1,0 +1,763 @@
+### USER
+Ich habe 60 Stück der Aktie Reality Income
+| US7561091049 |
+| --- |
+welche ich dieses Jahr gerne verkaufen möchte.
+Für den Betrag möchte ich dann folgenden ETF kaufen:
+| IE00077FRP95 |
+| --- |
+Nun möchte ich den optimalen Zeitpunkt finden, um diese Transaktion durchzuführen.
+Wie könnten wir hierfür einen Tracker umsetzen?
+
+### ASSISTANT
+# Tracker für optimalen Verkaufs-/Kaufzeitpunkt
+
+## Grundüberlegung
+
+Für den optimalen Zeitpunkt sollten wir mehrere Faktoren beobachten:
+
+**Realty Income (O)** → möglichst **teuer verkaufen**
+**ETF (IE00077FRP95)** → möglichst **günstig kaufen**
+
+---
+
+## Daten identifizieren
+
+```
+Realty Income Corp.    | ISIN: US7561091049 | Ticker: O      | NYSE
+ETF (Xtrackers/iShares)| ISIN: IE00077FRP95 | Ticker: prüfen | Xetra/LSE
+```
+
+> ⚠️ Den genauen ETF-Namen/Ticker solltest du kurz verifizieren – kannst du mir den Namen nennen oder soll ich anhand der ISIN weiterarbeiten?
+
+---
+
+## Mögliche Tracker-Umsetzung
+
+### Option 1: Python-Script (einfach & lokal)
+
+```python
+import yfinance as yf
+import pandas as pd
+from datetime import datetime
+
+# ── Konfiguration ───────────────────────────────────────────
+SELL_TICKER   = "O"          # Realty Income
+BUY_TICKER    = "XXXX"       # ETF-Ticker eintragen
+SHARES        = 60
+ALERT_SELL_ABOVE = 55.00     # Kurs-Ziel Verkauf (USD)
+ALERT_BUY_BELOW  = 100.00    # Kurs-Ziel Kauf   (EUR/USD)
+
+# ── Daten abrufen ───────────────────────────────────────────
+def get_price(ticker: str) -> dict:
+    stock = yf.Ticker(ticker)
+    info  = stock.fast_info
+    return {
+        "ticker"  : ticker,
+        "price"   : round(info.last_price, 2),
+        "currency": info.currency,
+        "time"    : datetime.now().strftime("%Y-%m-%d %H:%M"),
+    }
+
+# ── Bewertung ───────────────────────────────────────────────
+def evaluate(sell: dict, buy: dict):
+    total_sell = sell["price"] * SHARES
+    
+    print("\n" + "="*50)
+    print(f"📅  {sell['time']}")
+    print(f"\n📈  VERKAUF  | {sell['ticker']}")
+    print(f"    Kurs     : {sell['price']} {sell['currency']}")
+    print(f"    60 Stück : {total_sell:.2f} {sell['currency']}")
+    print(f"    Signal   : {'✅ ÜBER Ziel' if sell['price'] >= ALERT_SELL_ABOVE else '⏳ noch abwarten'}")
+    
+    print(f"\n📉  KAUF     | {buy['ticker']}")
+    print(f"    Kurs     : {buy['price']} {buy['currency']}")
+    print(f"    Signal   : {'✅ UNTER Ziel' if buy['price'] <= ALERT_BUY_BELOW else '⏳ noch abwarten'}")
+    
+    if sell["price"] >= ALERT_SELL_ABOVE and buy["price"] <= ALERT_BUY_BELOW:
+        print("\n🚀  >>> OPTIMALER ZEITPUNKT ERREICHT! <<<")
+    print("="*50)
+
+# ── Hauptprogramm ───────────────────────────────────────────
+if __name__ == "__main__":
+    sell_data = get_price(SELL_TICKER)
+    buy_data  = get_price(BUY_TICKER)
+    evaluate(sell_data, buy_data)
+```
+
+---
+
+### Option 2: Erweiterung mit automatischem Alert
+
+```python
+import smtplib
+from email.mime.text import MIMEText
+
+def send_alert(message: str):
+    # Gmail-Beispiel – App-Passwort verwenden!
+    sender   = "deine@gmail.com"
+    receiver = "deine@gmail.com"
+    
+    msg = MIMEText(message)
+    msg["Subject"] = "🔔 Realty Income → ETF Tausch-Alert"
+    msg["From"]    = sender
+    msg["To"]      = receiver
+    
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(sender, "APP-PASSWORT")
+        server.sendmail(sender, receiver, msg.as_string())
+```
+
+---
+
+### Option 3: Automatisch alle X Minuten prüfen
+
+```python
+import schedule
+import time
+
+def job():
+    sell_data = get_price(SELL_TICKER)
+    buy_data  = get_price(BUY_TICKER)
+    evaluate(sell_data, buy_data)
+    
+    # Optional: Alert senden wenn Bedingung erfüllt
+    if sell_data["price"] >= ALERT_SELL_ABOVE:
+        send_alert(f"Realty Income bei {sell_data['price']}$ – Verkauf prüfen!")
+
+# Alle 30 Minuten prüfen (Börsenzeiten beachten)
+schedule.every(30).minutes.do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
+```
+
+---
+
+## Zusätzliche Kennzahlen die ich empfehle zu tracken
+
+| Kennzahl | Warum relevant? |
+|---|---|
+| **52W Hoch/Tief** | Einordnung des aktuellen Kursniveaus |
+| **RSI (14)** | Überkauft/Überverkauft Signal |
+| **Dividenden-Termin O** | Vor Ex-Div-Datum noch halten? |
+| **Währung USD/EUR** | Realty Income notiert in USD |
+| **Spread ETF** | Handelszeitpunkt (Xetra-Stunden) |
+
+---
+
+## Nächste Schritte
+
+1. **ETF-Ticker** bestätigen (IE00077FRP95)
+2. **Zielkurse** festlegen – hast du schon Vorstellungen?
+3. **Plattform** wählen – lokal, Notebook, oder lieber ein Dashboard (z.B. Streamlit)?
+4. **Steuer** beachten – Verkauf in 2025 → Freistellungsauftrag ausgeschöpft?
+
+Möchtest du einen bestimmten Ansatz vertiefen? 🎯
+
+### USER
+1.  stimmt
+    
+2.  nein, nur maximale Anzahl der ETF Anteile
+    
+3.  Dashboard wäre toll, ober zB eine Nachricht über Signal
+    
+4.  Steuern sind nicht zu beachten
+
+### ASSISTANT
+# Optimierungsziel: Maximale ETF-Anteile
+
+## Die eigentliche Optimierungsformel
+
+```
+ETF-Anteile = (60 × Kurs_O × USD/EUR) / Kurs_ETF
+```
+
+**Ziel: Diese Zahl maximieren!**
+
+---
+
+## ETF identifizieren
+
+```
+IE00077FRP95 = Xtrackers MSCI World Swap UCITS ETF 1C
+Ticker Xetra : XDWD
+Währung      : EUR
+```
+
+---
+
+## Vollständiges Script mit beiden Optionen
+
+### Setup
+
+```bash
+pip install yfinance schedule requests streamlit plotly pandas
+```
+
+```python
+# config.py
+CONFIG = {
+    # Positionen
+    "SELL_TICKER"  : "O",        # Realty Income – NYSE
+    "BUY_TICKER"   : "XDWD.DE",  # Xtrackers MSCI World – Xetra
+    "SHARES_SELL"  : 60,
+
+    # Signal Messenger
+    "SIGNAL_ENABLE": True,
+    "SIGNAL_URL"   : "http://localhost:8080",   # signal-cli REST API
+    "SIGNAL_SENDER": "+49DEINENUMMER",
+    "SIGNAL_RECEIVER": "+49DEINENUMMER",        # kann gleich sein
+
+    # Prüfintervall
+    "CHECK_INTERVAL_MIN": 30,
+}
+```
+
+---
+
+## Kern-Logik
+
+```python
+# tracker.py
+import yfinance as yf
+import requests
+from datetime import datetime
+from config import CONFIG
+
+def get_prices() -> dict:
+    """Kurse & Wechselkurs abrufen"""
+    
+    sell  = yf.Ticker(CONFIG["SELL_TICKER"])
+    buy   = yf.Ticker(CONFIG["BUY_TICKER"])
+    fx    = yf.Ticker("EURUSD=X")
+
+    sell_price = sell.fast_info.last_price
+    buy_price  = buy.fast_info.last_price
+    eurusd     = fx.fast_info.last_price      # z.B. 1.08
+
+    # O notiert in USD → umrechnen in EUR
+    sell_price_eur = sell_price / eurusd
+    total_eur      = sell_price_eur * CONFIG["SHARES_SELL"]
+    etf_shares     = total_eur / buy_price
+
+    return {
+        "timestamp"      : datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "O_usd"          : round(sell_price, 4),
+        "O_eur"          : round(sell_price_eur, 4),
+        "total_eur"      : round(total_eur, 2),
+        "XDWD_eur"       : round(buy_price, 4),
+        "etf_shares"     : round(etf_shares, 4),
+        "etf_shares_full": int(etf_shares),   # kaufbare ganze Anteile
+        "eurusd"         : round(eurusd, 4),
+    }
+
+
+def send_signal_message(text: str):
+    """Nachricht via signal-cli REST API senden"""
+    if not CONFIG["SIGNAL_ENABLE"]:
+        return
+    
+    payload = {
+        "message"   : text,
+        "number"    : CONFIG["SIGNAL_SENDER"],
+        "recipients": [CONFIG["SIGNAL_RECEIVER"]],
+    }
+    try:
+        requests.post(
+            f"{CONFIG['SIGNAL_URL']}/v2/send",
+            json=payload,
+            timeout=5
+        )
+    except Exception as e:
+        print(f"Signal-Fehler: {e}")
+
+
+def format_message(data: dict, prev_best: int) -> str:
+    """Nachrichtentext zusammenstellen"""
+    
+    trend = "🆕 NEUES MAXIMUM" if data["etf_shares_full"] > prev_best else ""
+    
+    return (
+        f"📊 Realty Income → MSCI World Tracker\n"
+        f"{'─'*35}\n"
+        f"🕐 {data['timestamp']}\n\n"
+        f"📈 Realty Income (O)\n"
+        f"   {data['O_usd']} USD  ({data['O_eur']} EUR)\n"
+        f"   60 Stück = {data['total_eur']} EUR\n\n"
+        f"📉 Xtrackers MSCI World\n"
+        f"   {data['XDWD_eur']} EUR\n\n"
+        f"💱 EUR/USD: {data['eurusd']}\n\n"
+        f"✅ Kaufbare ETF-Anteile: {data['etf_shares_full']}\n"
+        f"   (exakt: {data['etf_shares']})\n"
+        f"{trend}"
+    )
+```
+
+---
+
+## Scheduler mit Benachrichtigung bei neuem Maximum
+
+```python
+# main.py
+import schedule
+import time
+import json
+import os
+from tracker import get_prices, send_signal_message, format_message
+from config import CONFIG
+
+HISTORY_FILE = "history.json"
+
+def load_history() -> list:
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE) as f:
+            return json.load(f)
+    return []
+
+def save_history(history: list):
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(history, f, indent=2)
+
+def job():
+    history = load_history()
+    prev_best = max((h["etf_shares_full"] for h in history), default=0)
+    
+    data = get_prices()
+    history.append(data)
+    save_history(history)
+    
+    msg = format_message(data, prev_best)
+    print(msg)
+    
+    # Signal senden wenn:
+    # a) Neues Maximum ODER
+    # b) Morgens um 9 Uhr als tägliches Update
+    is_new_max   = data["etf_shares_full"] > prev_best
+    is_daily_sum = datetime.now().hour == 9 and datetime.now().minute < 31
+    
+    if is_new_max or is_daily_sum:
+        send_signal_message(msg)
+
+# ── Start ────────────────────────────────────────────────────
+schedule.every(CONFIG["CHECK_INTERVAL_MIN"]).minutes.do(job)
+schedule.every().day.at("09:00").do(job)   # tägliche Zusammenfassung
+
+print("🚀 Tracker gestartet...")
+job()  # direkt einmal ausführen
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
+```
+
+---
+
+## Streamlit Dashboard
+
+```python
+# dashboard.py  →  starten mit: streamlit run dashboard.py
+import streamlit as st
+import plotly.graph_objects as go
+import pandas as pd
+import json
+from tracker import get_prices
+
+st.set_page_config(
+    page_title="O → XDWD Tracker",
+    page_icon="📊",
+    layout="wide"
+)
+
+st.title("📊 Realty Income → MSCI World Tausch-Tracker")
+
+# ── Live Daten ───────────────────────────────────────────────
+if st.button("🔄 Jetzt aktualisieren") or True:
+    data = get_prices()
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric(
+    "Realty Income (O)",
+    f"{data['O_usd']} USD",
+    f"{data['O_eur']} EUR"
+)
+col2.metric(
+    "Xtrackers MSCI World",
+    f"{data['XDWD_eur']} EUR"
+)
+col3.metric(
+    "Erlös (60 Stück)",
+    f"{data['total_eur']} EUR"
+)
+col4.metric(
+    "🎯 Kaufbare ETF-Anteile",
+    f"{data['etf_shares_full']}",
+    f"exakt: {data['etf_shares']}"
+)
+
+st.divider()
+
+# ── Historischer Verlauf ─────────────────────────────────────
+try:
+    with open("history.json") as f:
+        history = json.load(f)
+    
+    df = pd.DataFrame(history)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    
+    fig = go.Figure()
+    
+    fig.add_trace(go.Scatter(
+        x=df["timestamp"],
+        y=df["etf_shares_full"],
+        mode="lines+markers",
+        name="Kaufbare ETF-Anteile",
+        line=dict(color="#00CC96", width=2),
+        fill="tozeroy",
+    ))
+    
+    fig.update_layout(
+        title="Entwicklung kaufbarer ETF-Anteile",
+        xaxis_title="Zeit",
+        yaxis_title="Anzahl Anteile",
+        hovermode="x unified"
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
+    
+    # Maximum anzeigen
+    best = df.loc[df["etf_shares_full"].idxmax()]
+    st.success(
+        f"🏆 Bisheriges Maximum: **{best['etf_shares_full']} Anteile** "
+        f"am {best['timestamp'].strftime('%d.%m.%Y %H:%M')}"
+    )
+    
+    # Rohdaten
+    with st.expander("📋 Alle Messwerte"):
+        st.dataframe(df.sort_values("timestamp", ascending=False))
+
+except FileNotFoundError:
+    st.info("Noch keine historischen Daten – starte zuerst main.py")
+
+# Auto-Refresh alle 5 Minuten
+st.markdown(
+    '<meta http-equiv="refresh" content="300">',
+    unsafe_allow_html=True
+)
+```
+
+---
+
+## Signal einrichten (einmalig)
+
+```bash
+# signal-cli via Docker starten
+docker run -d \
+  --name signal-api \
+  -p 8080:8080 \
+  -v $(pwd)/signal-data:/home/user/.local/share/signal-cli \
+  bbernhard/signal-cli-rest-api
+
+# Nummer registrieren/verknüpfen
+# → http://localhost:8080/v1/qrcodelink?device_name=tracker
+# QR-Code mit Signal-App scannen
+```
+
+---
+
+## Projektstruktur
+
+```
+tausch-tracker/
+├── config.py
+├── tracker.py
+├── main.py          # Scheduler + Signal
+├── dashboard.py     # Streamlit
+├── history.json     # wird automatisch erstellt
+└── requirements.txt
+```
+
+```
+# requirements.txt
+yfinance
+schedule
+requests
+streamlit
+plotly
+pandas
+```
+
+---
+
+## Welchen Weg möchtest du gehen?
+
+| | Dashboard | Signal | Beides |
+|---|---|---|---|
+| **Aufwand** | gering | mittel (Docker) | mittel |
+| **Vorteil** | visuell | push-Nachricht | optimal |
+
+> 💡 Empfehlung: **Beides kombiniert** – `main.py` läuft im Hintergrund und sendet nur bei neuem Maximum eine Signal-Nachricht. Dashboard kannst du bei Interesse aufrufen.
+
+Soll ich beim Signal-Setup helfen oder das Dashboard noch erweitern? 🎯
+
+### USER
+aber dieses Programm muss doch irgendwo laufen?
+
+### ASSISTANT
+# Wo soll der Tracker laufen?
+
+Genau – gute Frage! Du brauchst einen Ort, der **dauerhaft läuft**. Hier sind deine Optionen:
+
+---
+
+## Übersicht der Möglichkeiten
+
+| Option | Kosten | Aufwand | Zuverlässigkeit |
+|---|---|---|---|
+| **Eigener PC/Mac** | kostenlos | minimal | ❌ nur wenn an |
+| **Raspberry Pi** | ~50€ einmalig | gering | ✅ 24/7 |
+| **Cloud VM** (z.B. Hetzner) | ~4€/Monat | mittel | ✅ 24/7 |
+| **GitHub Actions** | kostenlos | gering | ✅ geplante Jobs |
+| **PythonAnywhere** | kostenlos | minimal | ⚠️ limitiert |
+
+---
+
+## Meine Empfehlung: GitHub Actions
+
+> Kostenlos, kein Server nötig, läuft automatisch zu definierten Zeiten
+
+```
+Du brauchst nur:
+✅ GitHub Account (kostenlos)
+✅ Repository (kostenlos)
+✅ Signal oder Telegram Bot für Nachrichten
+```
+
+### Wie funktioniert das?
+
+```
+GitHub führt dein Script automatisch aus
+        ↓
+z.B. alle 30 Min während Börsenzeiten
+        ↓
+Script prüft Kurse via yfinance
+        ↓
+Bei neuem Maximum → Nachricht an dich
+```
+
+---
+
+## GitHub Actions Setup
+
+### Projektstruktur auf GitHub
+
+```
+tausch-tracker/
+├── .github/
+│   └── workflows/
+│       └── tracker.yml    ← steuert wann/wie
+├── tracker.py
+├── config.py
+└── requirements.txt
+```
+
+---
+
+### Workflow-Datei
+
+```yaml
+# .github/workflows/tracker.yml
+
+name: Tausch-Tracker
+
+on:
+  schedule:
+    # Läuft Mo-Fr alle 30 Min zwischen 9-17 Uhr (UTC+1 = UTC-1h)
+    - cron: '0,30 8-16 * * 1-5'
+  
+  # Manuell startbar über GitHub UI
+  workflow_dispatch:
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Repository laden
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Abhängigkeiten installieren
+        run: pip install yfinance requests
+
+      - name: Tracker ausführen
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python tracker.py
+```
+
+---
+
+### Angepasstes Tracker Script für GitHub Actions
+
+```python
+# tracker.py – optimiert für GitHub Actions
+import yfinance as yf
+import requests
+import json
+import os
+from datetime import datetime
+
+# ── Konfiguration ────────────────────────────────────────────
+SHARES_SELL = 60
+SELL_TICKER = "O"
+BUY_TICKER  = "XDWD.DE"
+
+# Telegram (einfacher als Signal!)
+TG_TOKEN   = os.environ.get("TELEGRAM_TOKEN")
+TG_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+
+# ── Kurse abrufen ────────────────────────────────────────────
+def get_prices() -> dict:
+    sell  = yf.Ticker(SELL_TICKER)
+    buy   = yf.Ticker(BUY_TICKER)
+    fx    = yf.Ticker("EURUSD=X")
+
+    sell_price = sell.fast_info.last_price
+    buy_price  = buy.fast_info.last_price
+    eurusd     = fx.fast_info.last_price
+
+    sell_eur   = sell_price / eurusd
+    total_eur  = sell_eur * SHARES_SELL
+    etf_shares = total_eur / buy_price
+
+    return {
+        "timestamp"      : datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "O_usd"          : round(sell_price, 2),
+        "O_eur"          : round(sell_eur, 2),
+        "total_eur"      : round(total_eur, 2),
+        "XDWD_eur"       : round(buy_price, 2),
+        "etf_shares"     : round(etf_shares, 4),
+        "etf_shares_full": int(etf_shares),
+        "eurusd"         : round(eurusd, 4),
+    }
+
+# ── Bisheriges Maximum laden ─────────────────────────────────
+def load_best() -> int:
+    """
+    Wir speichern das Maximum als GitHub Actions Variable
+    Alternativ: in einer kleinen Datei im Repo
+    """
+    try:
+        with open("best.json") as f:
+            return json.load(f)["best"]
+    except:
+        return 0
+
+def save_best(value: int):
+    with open("best.json", "w") as f:
+        json.dump({"best": value, 
+                   "updated": datetime.now().strftime("%Y-%m-%d %H:%M")}, f)
+
+# ── Telegram Nachricht ───────────────────────────────────────
+def send_telegram(text: str):
+    if not TG_TOKEN:
+        print("Kein Telegram Token – nur Konsole")
+        return
+    
+    url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+    requests.post(url, json={
+        "chat_id"   : TG_CHAT_ID,
+        "text"      : text,
+        "parse_mode": "Markdown"
+    })
+
+def format_message(data: dict, is_new_max: bool) -> str:
+    header = "🏆 *NEUES MAXIMUM!*\n\n" if is_new_max else "📊 *Tages-Update*\n\n"
+    
+    return (
+        f"{header}"
+        f"🕐 {data['timestamp']}\n\n"
+        f"📈 *Realty Income (O)*\n"
+        f"   `{data['O_usd']} USD` → `{data['O_eur']} EUR`\n"
+        f"   60 Stück = `{data['total_eur']} EUR`\n\n"
+        f"📉 *Xtrackers MSCI World*\n"
+        f"   `{data['XDWD_eur']} EUR`\n\n"
+        f"💱 EUR/USD: `{data['eurusd']}`\n\n"
+        f"✅ *Kaufbare ETF-Anteile: {data['etf_shares_full']}*\n"
+        f"   _(exakt: {data['etf_shares']})_"
+    )
+
+# ── Hauptprogramm ────────────────────────────────────────────
+if __name__ == "__main__":
+    data     = get_prices()
+    prev_best = load_best()
+    is_new_max = data["etf_shares_full"] > prev_best
+    
+    print(format_message(data, is_new_max))
+    
+    # Immer um 9 Uhr senden (erster Run des Tages)
+    current_hour = datetime.now().hour
+    is_morning   = current_hour == 8  # UTC = 9 Uhr MEZ
+    
+    if is_new_max or is_morning:
+        send_telegram(format_message(data, is_new_max))
+    
+    # Neues Maximum speichern
+    if is_new_max:
+        save_best(data["etf_shares_full"])
+        # Datei ins Repo committen
+        os.system('git config user.email "tracker@bot.com"')
+        os.system('git config user.name "Tracker Bot"')
+        os.system('git add best.json')
+        os.system(f'git commit -m "New best: {data["etf_shares_full"]} ETF shares"')
+        os.system('git push')
+```
+
+---
+
+## Einrichtung in 5 Schritten
+
+```
+1. GitHub Repository erstellen (privat!)
+         ↓
+2. Dateien hochladen
+         ↓
+3. Telegram Bot erstellen
+   → @BotFather in Telegram anschreiben
+   → /newbot → Token kopieren
+         ↓
+4. Secrets in GitHub hinterlegen
+   Repository → Settings → Secrets → Actions
+   • TELEGRAM_TOKEN  = dein Bot-Token
+   • TELEGRAM_CHAT_ID = deine Chat-ID
+         ↓
+5. Fertig – läuft automatisch! ✅
+```
+
+---
+
+## Telegram Bot in 2 Minuten
+
+```
+1. Telegram öffnen
+2. @BotFather suchen
+3. /newbot schreiben
+4. Name vergeben → Token erhalten
+5. @userinfobot schreiben → Chat-ID erhalten
+```
+
+> 💡 **Warum Telegram statt Signal?**
+> Telegram hat eine einfache REST-API – kein Docker, kein Server nötig.
+> Signal braucht zwingend einen laufenden Server.
+
+---
+
+Soll ich dir den **Telegram Bot Setup** oder das **GitHub Repository** Schritt für Schritt zeigen? 🎯
