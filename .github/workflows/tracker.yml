@@ -37,7 +37,8 @@ jobs:
       - name: Tracker ausführen
         env:
           TELEGRAM_TOKEN:   ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}          
+          FORCE_NOTIFY:     ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
         run: python tracker.py
 
       - name: Geänderte Dateien committen (best.json, history.json)
