@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 # ── Konfiguration ──────────────────────────────────────────────────────────────
 SHARES_SELL = 60
 SELL_TICKER = "O"        # Realty Income – NYSE (USD)
-BUY_TICKER  = "XDWD.DE" # Xtrackers MSCI World – Xetra (EUR)
+BUY_TICKER  = "UDIV.DE"  # Xtrackers MSCI World – Xetra (EUR)
 FX_TICKER   = "EURUSD=X" # Wechselkurs
 
 BEST_FILE   = "best.json"
