@@ -2,7 +2,7 @@ name: Tausch-Tracker
 
 on:
   schedule:
-    - cron: '5,35 8-16 * * 1-5'
+    - cron: '5,35 8-19 * * 1-5'
     # Mo–Fr alle 30 Min zwischen 09:00–17:30 Uhr MEZ (= 08:00–16:30 UTC)
     # NYSE öffnet 15:30 MEZ – daher läuft der Tracker ganztags für Xetra + NYSE
     
