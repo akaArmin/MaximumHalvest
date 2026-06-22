@@ -130,7 +130,7 @@ def format_message(data: dict, prev_best: int, is_morning: bool) -> str:
         f"📈 *Realty Income (O)*\n"
         f"   `{data['O_usd']} USD`  →  `{data['O_eur']} EUR`\n"
         f"   60 Stück = `{data['total_eur']} EUR`\n\n"
-        f"📉 *Xtrackers MSCI World (XDWD)*\n"
+        f"📉 *Global X SuperDividend (UDIV)*\n"
         f"   `{data['XDWD_eur']} EUR`\n\n"
         f"💱 EUR/USD: `{data['eurusd']}`\n\n"
         f"📌 Bisheriges Maximum: {prev_best} Anteile"
