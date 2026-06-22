@@ -124,6 +124,8 @@ def format_message(data: dict, prev_best: int, is_morning: bool) -> str:
 
     return (
         f"{header}"
+        f"✅ *Kaufbare ETF-Anteile: {data['etf_shares_full']}*\n"
+        f"   _(exakt: {data['etf_shares']})_\n\n"
         f"🕐 {data['timestamp']}\n\n"
         f"📈 *Realty Income (O)*\n"
         f"   `{data['O_usd']} USD`  →  `{data['O_eur']} EUR`\n"
@@ -131,15 +133,13 @@ def format_message(data: dict, prev_best: int, is_morning: bool) -> str:
         f"📉 *Xtrackers MSCI World (XDWD)*\n"
         f"   `{data['XDWD_eur']} EUR`\n\n"
         f"💱 EUR/USD: `{data['eurusd']}`\n\n"
-        f"✅ *Kaufbare ETF-Anteile: {data['etf_shares_full']}*\n"
-        f"   _(exakt: {data['etf_shares']})_\n\n"
         f"📌 Bisheriges Maximum: {prev_best} Anteile"
     )
 
 
 # ── Hauptprogramm ──────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    print(f"🚀 Tracker läuft – {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
+    # print(f"🚀 Tracker läuft – {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}")
 
     data      = get_prices()
     prev_best = load_best()
