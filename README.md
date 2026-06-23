@@ -1,6 +1,6 @@
 # 📊 Realty Income → MSCI World Tausch-Tracker
 
-Verfolgt automatisch, wie viele **Xtrackers MSCI World (XDWD)** Anteile du mit dem Erlös
+Verfolgt automatisch, wie viele **Global X SuperDividend (UVID)** Anteile du mit dem Erlös
 aus dem Verkauf von **60 Realty Income (O)** Aktien kaufen könntest.
 
 Benachrichtigt dich per **Telegram** sobald ein neues Maximum erreicht wird.
@@ -79,7 +79,7 @@ In `tracker.py` ganz oben:
 ```python
 SHARES_SELL = 60        # Anzahl O-Aktien
 SELL_TICKER = "O"       # Realty Income
-BUY_TICKER  = "XDWD.DE" # ETF (Xetra)
+BUY_TICKER  = "XDWD.DE" # Global X SuperDividend
 ```
 
 Cron-Zeitplan in `.github/workflows/tracker.yml`:
