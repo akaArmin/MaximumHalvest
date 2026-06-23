@@ -1,5 +1,5 @@
 """
-Realty Income → Xtrackers MSCI World Tausch-Tracker
+Realty Income → Global X SuperDividend Tausch-Tracker
 Optimierungsziel: maximale ETF-Anteile aus 60 O-Aktien
 
 Konfiguration via GitHub Secrets:
