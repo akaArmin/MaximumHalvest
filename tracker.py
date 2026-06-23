@@ -26,9 +26,6 @@ HISTORY_FILE = "history.json"
 TG_TOKEN   = os.environ.get("TELEGRAM_TOKEN", "")
 TG_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
-# UTC-Stunde des ersten Tages-Runs (8 UTC = 9 Uhr MEZ / 10 Uhr MESZ)
-MORNING_HOUR_UTC = 8
-
 
 # ── Kurse abrufen ──────────────────────────────────────────────────────────────
 def get_prices() -> dict:
@@ -112,13 +109,13 @@ def send_telegram(text: str):
 
 
 # ── Nachrichtentext ────────────────────────────────────────────────────────────
-def format_message(data: dict, prev_best: int, is_morning: bool) -> str:
+def format_message(data: dict, prev_best: int, is_external: bool) -> str:
     is_new_max = data["etf_shares_full"] > prev_best
 
     if is_new_max:
         header = f"🏆 *NEUES MAXIMUM* (+{data['etf_shares_full'] - prev_best} Anteile)\n\n"
-    elif is_morning:
-        header = "🌅 *Tages-Update*\n\n"
+    elif is_external:
+        header = "📊 *Kurs-Check*\n\n"
     else:
         header = "📊 *Kurs-Check*\n\n"
 
@@ -144,14 +141,14 @@ if __name__ == "__main__":
     data      = get_prices()
     prev_best = load_best()
     is_new_max = data["etf_shares_full"] > prev_best
-    is_morning = datetime.now(timezone.utc).hour == MORNING_HOUR_UTC
+    is_external = os.environ.get("EXTERNAL_TRIGGER", "").lower() == "true"
 
-    msg = format_message(data, prev_best, is_morning)
+    msg = format_message(data, prev_best, is_external)
     print(msg.replace("*", "").replace("`", ""))  # sauber in Konsole
 
-    # Nachricht senden wenn: neues Maximum ODER erster Run des Tages ODER manueller Test
+    # Nachricht senden
     force = os.environ.get("FORCE_NOTIFY", "").lower() == "true"
-    if is_new_max or is_morning or force:
+    if is_new_max or is_external or force:
         send_telegram(msg)
         print("✉️  Telegram-Nachricht gesendet." if TG_TOKEN else "")
 
