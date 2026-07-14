@@ -1,0 +1,3 @@
+Mögliche Verbesserungen:
+
+-> Nachricht bei "lokalem Maximum", sprich zB größster Wert seit 3 Tagen
