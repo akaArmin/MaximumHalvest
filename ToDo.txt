@@ -1,3 +1,4 @@
 Mögliche Verbesserungen:
 
 -> Nachricht bei "lokalem Maximum", sprich zB größster Wert seit 3 Tagen
+-> historical_analysis_V2.py ausführbar machen (Actions)
