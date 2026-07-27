@@ -2538,5 +2538,15 @@
     "etf_shares": 392.4375,
     "etf_shares_full": 392,
     "eurusd": 1.138
+  },
+  {
+    "timestamp": "2026-07-27 14:35 UTC",
+    "O_usd": 66.0,
+    "O_eur": 58.02,
+    "total_eur": 3481.37,
+    "XDWD_eur": 8.8,
+    "etf_shares": 395.61,
+    "etf_shares_full": 395,
+    "eurusd": 1.1374
   }
 ]
