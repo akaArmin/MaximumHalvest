@@ -1,15 +1,5 @@
 [
   {
-    "timestamp": "2026-08-04 15:57 UTC",
-    "O_usd": 62.97,
-    "O_eur": 54.62,
-    "total_eur": 3277.22,
-    "XDWD_eur": 8.74,
-    "etf_shares": 374.9675,
-    "etf_shares_full": 374,
-    "eurusd": 1.1529
-  },
-  {
     "timestamp": "2026-08-04 16:01 UTC",
     "O_usd": 62.98,
     "O_eur": 54.63,
@@ -4998,5 +4988,15 @@
     "etf_shares": 376.8451,
     "etf_shares_full": 376,
     "eurusd": 1.1202
+  },
+  {
+    "timestamp": "2026-11-03 16:01 UTC",
+    "O_usd": 57.2,
+    "O_eur": 51.09,
+    "total_eur": 3065.12,
+    "XDWD_eur": 8.08,
+    "etf_shares": 379.4874,
+    "etf_shares_full": 379,
+    "eurusd": 1.1197
   }
 ]
